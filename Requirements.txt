@@ -1,5 +1,1 @@
 pandas
-uvicorn
-fastapi
-aiofiles
-websockets
