@@ -1,7 +1,7 @@
 # %%
 import pandas as pd
 import xml.etree.ElementTree as ET
-# %% setting default values for the df
+
 cols = {'INSTRUMENT':'Components-Instruments',
             'LINE':'Components-Process Lines',
             'MECHANICAL':'Components-Mechanical',
@@ -16,7 +16,8 @@ df = pd.DataFrame(colstuple, columns=['tblname','databasename'])
 
 # %% only finding lines that are columns in tbl.
 columns = []
-f =  open("Database.tbl")
+
+f = open('Database.tbl')
 data = f.readlines()
 for line in data:
     if line.find(']') != -1:
@@ -78,14 +79,12 @@ for count, table in enumerate(usertables):
 dfuser = pd.DataFrame(usertablelist, columns=['tblname','databasename'])
 df = pd.concat([df, dfuser], ignore_index=True)
 
-# if __name__ == '__main__':
-    # main()
 # %%
 df = pd.merge(df, dffields, on ='tblname', how ='inner')
 df['Id'] = ''
 
 # %%
-tree = ET.parse('Configuration.xml')
+tree = ET.parse(".\\Configuration.xml")
 root = tree.getroot()
 
 # %%
@@ -98,14 +97,10 @@ for datatable in root.iter('DataTable'):
     for table in df['databasename'].unique():
         if datatable.attrib.get('Name') == table:
             for views in datatable.iter('Views'):
-                # print(view.tag)
                 view = ET.SubElement(views, 'View')
                 view.set('Name', 'DAT_FILE_IMPORT')
                 for vnum in views:
                     if vnum.attrib.get('Name') == 'DAT_FILE_IMPORT':
-                        # print(vnum.attrib)
-
-
                         for count, row in enumerate(df['databasename']):
                             if row == table:
                                 fieldno = ET.SubElement(vnum, 'Field')
@@ -115,16 +110,3 @@ for datatable in root.iter('DataTable'):
 
 root.set('xmlns:xs','http://www.w3.org/2001/XMLSchema-instance')                  
 tree.write('.\\output\\Configuration.xml', encoding='utf-8', method='xml', xml_declaration=True, short_empty_elements=False)
-
-# %%
-#     for field in datatable.iter('Field'):
-#         pass
-# tree.write('temp.xml', encoding='utf-8', sho)
-# # # %%
-# for datatable in root.iter('DataTable'):
-#     if 
-#     for view in datatable.iter('Views'):
-#         b = ET.SubElement(datatable, 'b')
-#         b.set('Name', view)
-#         print(ET.dump(view))
-# %%
